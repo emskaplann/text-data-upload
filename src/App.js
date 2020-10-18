@@ -4,6 +4,7 @@ import { ProgressBar, Step } from 'react-step-progress-bar';
 import FileUpload from './sub-components/FileUpload.js';
 import AdjustSettings from './sub-components/AdjustSettings.js';
 import ConfirmUpload from './sub-components/ConfirmUpload.js';
+import UploadService from './services/UploadService.js';
 import Papa from 'papaparse';
 import './App.css';
 
@@ -12,7 +13,7 @@ class App extends React.Component {
     super();
 
     this.state = {
-      step: 2,
+      step: 3,
       selectedFile: null,
       tableHeaders: ["id", "country", "blabla", "ehehe", "denix"],
       excludedHeaders: [true, true, true, true, true],
@@ -23,6 +24,16 @@ class App extends React.Component {
         timestamp: null
       }
     }
+
+    this.uploadService = new UploadService(this)
+    //  {
+    //    file: this.state.selectedFile,
+    //    tableHeaders: this.availableHeaders(),
+    //    assigned: {
+    //      id: x,
+    //      ...
+    //    } 
+    //  }
 
     this.config = {
       delimiter: "",	// auto-detect
@@ -173,7 +184,7 @@ class App extends React.Component {
       case 2:
         return <AdjustSettings availableHeaders={this.availableHeaders()} tableHeaders={this.state.tableHeaders} onChangeCheckbox={this.onChangeCheckbox} onChangeList={this.onChangeList} />
       case 3:
-        return <ConfirmUpload />
+        return <ConfirmUpload selectedHeaders={this.availableHeaders()} />
       default: 
         return <FileUpload onChangeHandler={this.onChangeHandler} />
     }
@@ -199,7 +210,7 @@ class App extends React.Component {
       case 2:
         if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
       case 3:
-        return false
+        if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
       default:
         return false
     }
@@ -258,7 +269,7 @@ class App extends React.Component {
         </Card.Body>
         <Card.Footer>
           {this.state.step > 1 ? <Button className="cancel-button" variant="secondary" onClick={this.cancelUpload}>Cancel</Button> : null}
-          <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>Next</Button>
+          <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? "Upload" : "Next"}</Button>
         </Card.Footer>
       </Card>
     )
