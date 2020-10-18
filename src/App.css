@@ -11,8 +11,21 @@
   float: right;
 }
 
+.cancel-button {
+  float: left;
+}
+
+.headers-column {
+  margin-left: 15px;
+}
+
+.exclude-columns {
+  margin-bottom: 25px;
+}
+
 .indexedStep {
   color: white;
+  margin-left: 40px;
   width: 20px;
   height: 20px;
   font-size: 12px;
@@ -95,7 +108,15 @@
   text-align: center;
 }
 
-.form-control {
+.fc-custom {
   font-weight: 600 !important;
-  height: 500px !important;
+  height: 475px !important;
+}
+
+.fc-custom2 {
+  width: 30% !important;
+}
+
+.list-form-input {
+  margin-bottom: 15px;
 }
