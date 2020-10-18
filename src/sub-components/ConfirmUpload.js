@@ -34,6 +34,7 @@ export default function ConfirmUpload(props) {
                                 <h6>ID:</h6>
                             </Col>
                             <Col>
+                                {props.assignedInfo.id}
                             </Col>
                         </Row>
                     </div>
@@ -43,6 +44,7 @@ export default function ConfirmUpload(props) {
                                 <h6>Name:</h6>
                             </Col>
                             <Col>
+                                {props.assignedInfo.name}
                             </Col>
                         </Row>
                     </div>
@@ -52,7 +54,7 @@ export default function ConfirmUpload(props) {
                                 <h6>Timestamp:</h6>
                             </Col>
                             <Col>
-                                
+                                {props.assignedInfo.timestamp}
                             </Col>
                         </Row>                       
                     </div>

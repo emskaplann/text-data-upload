@@ -13,10 +13,10 @@ class App extends React.Component {
     super();
 
     this.state = {
-      step: 3,
+      step: 1,
       selectedFile: null,
-      tableHeaders: ["id", "country", "blabla", "ehehe", "denix"],
-      excludedHeaders: [true, true, true, true, true],
+      tableHeaders: [],
+      excludedHeaders: [],
       assignedHeaders: [],
       assigned: {
         id: null,
@@ -114,16 +114,28 @@ class App extends React.Component {
     this.setState({excludedHeaders: newArr})
   }
 
+  syncAssHeadersState = () => {
+    let currentAssHeaders = []
+    for(let val in this.state.assigned) {
+      let i = this.availableHeaders().indexOf(this.state.assigned[val])
+      if(i > -1) currentAssHeaders.push(i)
+    }
+
+    this.setState({assignedHeaders: [...new Set(currentAssHeaders)]})
+  }
+
   onChangeList = event => {
-    let val = event.target.value
+    let val = parseInt(event.target.value)
     if(val > -1) {
+      debugger
       if(this.state.assignedHeaders.includes(val)) {
         window.alert("You already assigned this column.")
-        event.target.value = -1
+        let idx = this.availableHeaders().indexOf(this.state.assigned[event.target.parentElement.children[0].textContent.toLowerCase()])
+        event.target.value = idx
         return;
       }
       this.state.assignedHeaders.push(val)
-      this.setState({assigned: {...this.state.assigned, [event.target.parentElement.firstElementChild.textContent.toLowerCase()]: this.availableHeaders()[val]}})
+      this.setState({assigned: {...this.state.assigned, [event.target.parentElement.firstElementChild.textContent.toLowerCase()]: this.availableHeaders()[val]}}, this.syncAssHeadersState)
     } else {
       //remove the value from assigned
       let header = this.state.assigned[event.target.parentElement.firstElementChild.textContent.toLowerCase()]
@@ -144,6 +156,7 @@ class App extends React.Component {
           this.setState({step: 2})
         }
       case 2:
+        this.setState({step: 3})
       case 3:
       default:
         console.log(this.state.step)
@@ -184,7 +197,7 @@ class App extends React.Component {
       case 2:
         return <AdjustSettings availableHeaders={this.availableHeaders()} tableHeaders={this.state.tableHeaders} onChangeCheckbox={this.onChangeCheckbox} onChangeList={this.onChangeList} />
       case 3:
-        return <ConfirmUpload selectedHeaders={this.availableHeaders()} />
+        return <ConfirmUpload selectedHeaders={this.availableHeaders()} assignedInfo={this.state.assigned} />
       default: 
         return <FileUpload onChangeHandler={this.onChangeHandler} />
     }
