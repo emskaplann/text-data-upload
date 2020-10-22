@@ -26,15 +26,7 @@ class App extends React.Component {
     }
 
     this.uploadService = new UploadService(this)
-    //  {
-    //    file: this.state.selectedFile,
-    //    tableHeaders: this.availableHeaders(),
-    //    assigned: {
-    //      id: x,
-    //      ...
-    //    } 
-    //  }
-
+    
     this.config = {
       delimiter: "",	// auto-detect
       newline: "",	// auto-detect
@@ -127,7 +119,7 @@ class App extends React.Component {
   onChangeList = event => {
     let val = parseInt(event.target.value)
     if(val > -1) {
-      debugger
+      // debugger
       if(this.state.assignedHeaders.includes(val)) {
         window.alert("You already assigned this column.")
         let idx = this.availableHeaders().indexOf(this.state.assigned[event.target.parentElement.children[0].textContent.toLowerCase()])
@@ -158,6 +150,16 @@ class App extends React.Component {
       case 2:
         this.setState({step: 3})
       case 3:
+        // send the request
+        // start loading icon
+        const form = new FormData()
+        form.append("file", this.state.selectedFile)
+        form.append("table_headers", this.availableHeaders())
+        form.append("id", this.state.assigned.id)
+        form.append("name", this.state.assigned.name)
+        form.append("timestamp", this.state.assigned.timestamp)
+        this.uploadService.uploadFileToParse(form)
+        // end loading icon
       default:
         console.log(this.state.step)
     }
