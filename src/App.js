@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Row, Col, Alert } from 'react-bootstrap';
+import { Card, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { ProgressBar, Step } from 'react-step-progress-bar';
 import FileUpload from './sub-components/FileUpload.js';
 import AdjustSettings from './sub-components/AdjustSettings.js';
@@ -22,7 +22,9 @@ class App extends React.Component {
         id: null,
         name: null,
         timestamp: null
-      }
+      },
+      resultsLoading: false,
+      loadResponseInfo: false,
     }
 
     this.uploadService = new UploadService(this)
@@ -88,12 +90,16 @@ class App extends React.Component {
         switch(val) {
           case "id":
             targetFormInput = 0
+            break;
           case "name":
             targetFormInput = 1
+            break;
           case "timestamp":
             targetFormInput = 2
+            break;
           default:
             targetFormInput = 0
+            break;
         }
         let input = document.getElementsByClassName("list-form-input")[targetFormInput]
         input.children[1].value = -1
@@ -147,19 +153,41 @@ class App extends React.Component {
           Papa.parse(this.state.selectedFile, this.config)
           this.setState({step: 2})
         }
+        break;
       case 2:
         this.setState({step: 3})
+        break;
       case 3:
-        // send the request
-        // start loading icon
-        const form = new FormData()
-        form.append("file", this.state.selectedFile)
-        form.append("table_headers", this.availableHeaders())
-        form.append("id", this.state.assigned.id)
-        form.append("name", this.state.assigned.name)
-        form.append("timestamp", this.state.assigned.timestamp)
-        this.uploadService.uploadFileToParse(form)
-        // end loading icon
+        if(!this.state.errorType) {
+          // send the request
+          // start loading icon
+          this.setState({resultsLoading: !this.state.resultsLoading})
+          const form = new FormData()
+          form.append("file", this.state.selectedFile)
+          form.append("table_headers", this.availableHeaders())
+          form.append("id", this.state.assigned.id)
+          form.append("name", this.state.assigned.name)
+          form.append("timestamp", this.state.assigned.timestamp)
+          this.uploadService.uploadFileToParse(form)
+          // end loading icon
+        } else {
+          // upload another, reset the state
+          this.setState({
+            step: 1,
+            selectedFile: null,
+            tableHeaders: [],
+            excludedHeaders: [],
+            assignedHeaders: [],
+            assigned: {
+              id: null,
+              name: null,
+              timestamp: null
+            },
+            resultsLoading: false,
+            loadResponseInfo: false,
+          })
+        }        
+        break;
       default:
         console.log(this.state.step)
     }
@@ -189,7 +217,20 @@ class App extends React.Component {
 
   cancelUpload = event => {
     // cancel upload
-    console.log('upload cancelled')
+    this.setState({
+      step: 1,
+      selectedFile: null,
+      tableHeaders: [],
+      excludedHeaders: [],
+      assignedHeaders: [],
+      assigned: {
+        id: null,
+        name: null,
+        timestamp: null
+      },
+      resultsLoading: false,
+      loadResponseInfo: false,
+    })
   }
 
   renderContent = () => {
@@ -199,7 +240,7 @@ class App extends React.Component {
       case 2:
         return <AdjustSettings availableHeaders={this.availableHeaders()} tableHeaders={this.state.tableHeaders} onChangeCheckbox={this.onChangeCheckbox} onChangeList={this.onChangeList} />
       case 3:
-        return <ConfirmUpload selectedHeaders={this.availableHeaders()} assignedInfo={this.state.assigned} />
+        return <ConfirmUpload selectedHeaders={this.availableHeaders()} assignedInfo={this.state.assigned} loadResponseInfo={this.state.loadResponseInfo} errorType={this.state.errorType} errorLists={this.state.errorLists} fileUrl={this.state.fileUrl} />
       default: 
         return <FileUpload onChangeHandler={this.onChangeHandler} />
     }
@@ -222,10 +263,13 @@ class App extends React.Component {
     switch(this.state.step) {
       case 1:
         if(this.state.selectedFile) return true
+        break;
       case 2:
         if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
+        break;
       case 3:
         if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
+        break;
       default:
         return false
     }
@@ -284,7 +328,19 @@ class App extends React.Component {
         </Card.Body>
         <Card.Footer>
           {this.state.step > 1 ? <Button className="cancel-button" variant="secondary" onClick={this.cancelUpload}>Cancel</Button> : null}
-          <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? "Upload" : "Next"}</Button>
+          {
+            !this.state.resultsLoading ? <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? this.state.errorType ? "Upload Another" : "Upload" : "Next"}</Button>
+            : <Button className="move-forward-button" variant="primary" disabled>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+                <span className="sr-only">Loading...</span>
+              </Button>
+          }
         </Card.Footer>
       </Card>
     )
