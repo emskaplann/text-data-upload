@@ -44,5 +44,8 @@ export default class UploadService {
 
             }
         })
+        .catch(error => {
+            console.log(error)
+        })
     }
 }

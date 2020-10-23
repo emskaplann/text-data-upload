@@ -200,7 +200,7 @@ class App extends React.Component {
       case 2:
         return "Adjust Settings"
       case 3:
-        return "Confirm Upload"
+        return "Confirm & Upload"
       default:
         console.log(this.state.step)
     }

@@ -32,7 +32,7 @@ export default function ConfirmUpload(props) {
     function transformArraysIntoList(arr, double) {
         const transformedArr = []
         for(let i = 0; i < arr.length; i++) {
-            transformedArr.push(<Col key={i} lg={double ? 6 : 3}>{arr[i]}</Col>)
+            transformedArr.push(<Col key={i} lg={double ? 4 : 3}>{arr[i]}</Col>)
         }
         return transformedArr
     }
