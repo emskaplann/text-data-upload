@@ -12,6 +12,11 @@ export default class UploadService {
         })
         .then(r => r.json())
         .then(response => {
+            debugger
+            if(response.status === 500) {
+                // error arised in backend
+                return;
+            }
             if(response.error) {
                 // handle error
                 // errorType: 0 => both, 1 => duplicate_id, 2 => non_convertible_timestamp
