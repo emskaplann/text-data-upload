@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Button, Row, Col, Spinner } from 'react-bootstrap';
-import { ProgressBar, Step } from 'react-step-progress-bar';
 import FileUpload from './sub-components/FileUpload.js';
 import AdjustSettings from './sub-components/AdjustSettings.js';
 import ConfirmUpload from './sub-components/ConfirmUpload.js';
+import CustomProgressBar from './sub-components/CustomProgressBar.js';
 import UploadService from './services/UploadService.js';
 import Papa from 'papaparse';
 import './App.css';
@@ -185,6 +185,9 @@ class App extends React.Component {
             },
             resultsLoading: false,
             loadResponseInfo: false,
+            successfullyCompleted: false,
+            errorType: null,
+            errorLists: null,
           })
         }        
         break;
@@ -230,6 +233,9 @@ class App extends React.Component {
       },
       resultsLoading: false,
       loadResponseInfo: false,
+      successfullyCompleted: false,
+      errorType: null,
+      errorLists: null,
     })
   }
 
@@ -281,41 +287,11 @@ class App extends React.Component {
       <Card className="main-container">
         <Card.Header as="div">
           <Row>
-            <Col>
+            <Col lg={3}>
               <h5>{this.renderPageTitle()}</h5>
             </Col>
-            <Col>
-              <ProgressBar percent={this.stepToProgress()}>
-                <Step>
-                  {({ accomplished, index }) => (
-                    <div
-                      className={`indexedStep ${accomplished ? "accomplished" : null}`}
-                    >
-                      {index + 1}
-                    </div>
-                  )}
-                </Step>
-                <Step>
-                  {({ accomplished, index }) => (
-                    <div
-                      className={`indexedStep ${accomplished ? "accomplished" : null}`}
-                    >
-                      {index + 1}
-                    </div>
-                  )}
-                </Step>
-                <Step>
-                  {({ accomplished, index }) => (
-                    <>
-                    <div
-                      className={`indexedStep ${accomplished ? "accomplished" : null}`}
-                    >
-                      {index + 1}
-                    </div>
-                    </>
-                  )}
-                </Step>
-              </ProgressBar>
+            <Col lg={9}>
+              <CustomProgressBar activatedStep={this.state.step}/>
             </Col>
           </Row>
         </Card.Header>
