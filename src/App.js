@@ -158,7 +158,7 @@ class App extends React.Component {
         this.setState({step: 3})
         break;
       case 3:
-        if(!this.state.errorType) {
+        if(!this.state.errorType && !this.state.successfullyCompleted) {
           // send the request
           // start loading icon
           this.setState({resultsLoading: !this.state.resultsLoading})
