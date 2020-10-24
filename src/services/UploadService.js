@@ -47,7 +47,7 @@ export default class UploadService {
                 //handle success
                 this.component.setState({fileUrl: response.link}, () => {
                     this.component.setState({loadResponseInfo: true}, () => {
-                        this.component.setState({resultsLoading: !this.component.state.resultsLoading})
+                        this.component.setState({resultsLoading: !this.component.state.resultsLoading, successfullyCompleted: true})
                     })
                 })
             }

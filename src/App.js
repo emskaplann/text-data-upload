@@ -327,9 +327,9 @@ class App extends React.Component {
           {this.renderContent()}
         </Card.Body>
         <Card.Footer>
-          {this.state.step > 1 ? <Button className="cancel-button" variant="secondary" onClick={this.cancelUpload}>Cancel</Button> : null}
+          {this.state.step > 1 && !this.state.successfullyCompleted ? <Button className="cancel-button" variant="secondary" onClick={this.cancelUpload}>Cancel</Button> : null}
           {
-            !this.state.resultsLoading ? <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? this.state.errorType ? "Upload Another" : "Upload" : "Next"}</Button>
+            !this.state.resultsLoading ? <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? this.state.errorType || this.state.successfullyCompleted ? "Upload Another" : "Upload" : "Next"}</Button>
             : <Button className="move-forward-button" variant="primary" disabled>
                 <Spinner
                   as="span"
