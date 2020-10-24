@@ -12,7 +12,6 @@ export default class UploadService {
         })
         .then(r => r.json())
         .then(response => {
-            debugger
             if(response.status === 500) {
                 // error arised in backend
                 return;
@@ -44,9 +43,13 @@ export default class UploadService {
                         this.component.setState({resultsLoading: !this.component.state.resultsLoading})
                     })
                 })
-            } else if(response.success) {
+            } else {
                 //handle success
-
+                this.component.setState({fileUrl: response.link}, () => {
+                    this.component.setState({loadResponseInfo: true}, () => {
+                        this.component.setState({resultsLoading: !this.component.state.resultsLoading})
+                    })
+                })
             }
         })
         .catch(error => {

@@ -84,7 +84,9 @@ export default function ConfirmUpload(props) {
                 // success
                 return(
                     <div className="response-info">
-                        
+                        <h6>Your dataset was succesfully imported to our system. You can upload another dataset if you'ld like to. You can find the link of the imported dataset below.</h6>
+                        <br />
+                        <b><a href={props.fileUrl}>Link of the imported dataset.</a></b>
                     </div>
                 )
             } else {

@@ -281,7 +281,7 @@ class App extends React.Component {
       <Card className="main-container">
         <Card.Header as="div">
           <Row>
-            <Col lg={3}>
+            <Col>
               <h5>{this.renderPageTitle()}</h5>
             </Col>
             <Col>
