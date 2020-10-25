@@ -1,7 +1,7 @@
 export default class UploadService {
     constructor(component) {
         this.testURL = "http://localhost:3000/text_data_files"
-        this.prodURL = ""
+        this.prodURL = "https://calm-ocean-20734.herokuapp.com/text_data_files"
         this.component = component
     }
 

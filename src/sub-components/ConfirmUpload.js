@@ -112,12 +112,12 @@ export default function ConfirmUpload(props) {
                 </div>
             </div>
             <div>
-                <h6><b>ID, Name,</b> and <b>Timestamp</b> assignment:</h6>
+                <h6>ID, Name, and Timestamp assignment:</h6>
                 <div className="headers-column">
                     <div className="list-form-input">
                         <Row>
-                            <Col>
-                                <h6>ID:</h6>
+                            <Col lg={3}>
+                                <h6><b>ID:</b></h6>
                             </Col>
                             <Col>
                                 {props.assignedInfo.id}
@@ -126,8 +126,8 @@ export default function ConfirmUpload(props) {
                     </div>
                     <div className="list-form-input">
                         <Row>
-                            <Col>
-                                <h6>Name:</h6>
+                            <Col lg={3}>
+                                <h6><b>Name:</b></h6>
                             </Col>
                             <Col>
                                 {props.assignedInfo.name}
@@ -136,8 +136,8 @@ export default function ConfirmUpload(props) {
                     </div>
                     <div className="list-form-input">
                         <Row>
-                            <Col>
-                                <h6>Timestamp:</h6>
+                            <Col lg={3}>
+                                <h6><b>Timestamp:</b></h6>
                             </Col>
                             <Col>
                                 {props.assignedInfo.timestamp}

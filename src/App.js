@@ -25,6 +25,8 @@ class App extends React.Component {
       },
       resultsLoading: false,
       loadResponseInfo: false,
+      convertingFile: false,
+      asString: true,
     }
 
     this.uploadService = new UploadService(this)
@@ -56,6 +58,17 @@ class App extends React.Component {
       transform: undefined,
       delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
     }
+
+    this.unparseConfig = {
+      quotes: false, //or array of booleans
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ",",
+      header: true,
+      newline: "\r\n",
+      skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+      columns: null //or array of strings
+    }
   }
   
   parseComplete = (results, parser) => {
@@ -74,8 +87,15 @@ class App extends React.Component {
   }
 
   onChangeHandler = event => {
-    console.log(event.target.files[0])
-    this.setState({selectedFile: event.target.files[0]})
+    if(event.target.files[0].name.substr(-4) === "xlsx") {
+      //if file is .xlsx
+      window.parseExcelXLSX(event.target.files[0], this)
+    } else if(event.target.files[0].name.substr(-3) === "xls") {
+      //if file is .xls
+      window.parseExcelXLS(event.target.files[0], this)
+    } else {
+      this.setState({selectedFile: event.target.files[0]})
+    }
   }
 
   onChangeCheckbox = event => {
@@ -150,7 +170,17 @@ class App extends React.Component {
           window.alert("Please select a file to move forward.")
         } else {
           // move forward
-          Papa.parse(this.state.selectedFile, this.config)
+          if(this.state.asString) {
+            const headers = []
+            for (const [key, value] of Object.entries(this.state.converted[0])) {headers.push(key)} //eslint-disable-line
+            this.setState({tableHeaders: headers, excludedHeaders: headers.map(el => true)}, function(){
+              this.setState({step: 2}, function() {
+                // load end
+              })
+            })
+          } else {
+            Papa.parse(this.state.selectedFile, this.config)
+          }
           this.setState({step: 2})
         }
         break;
@@ -168,6 +198,7 @@ class App extends React.Component {
           form.append("id", this.state.assigned.id)
           form.append("name", this.state.assigned.name)
           form.append("timestamp", this.state.assigned.timestamp)
+          form.append("as_string", this.state.asString)
           this.uploadService.uploadFileToParse(form)
           // end loading icon
         } else {
@@ -188,6 +219,10 @@ class App extends React.Component {
             successfullyCompleted: false,
             errorType: null,
             errorLists: null,
+            convertingFile: false,
+            asString: false,
+            fileUrl: null,
+            converted: null,
           })
         }        
         break;
@@ -236,13 +271,17 @@ class App extends React.Component {
       successfullyCompleted: false,
       errorType: null,
       errorLists: null,
+      convertingFile: false,
+      asString: false,
+      fileUrl: null,
+      converted: null,
     })
   }
 
   renderContent = () => {
     switch(this.state.step) {
       case 1:
-        return <FileUpload onChangeHandler={this.onChangeHandler} />
+        return <FileUpload onChangeHandler={this.onChangeHandler} fileLoading={this.state.convertingFile} />
       case 2:
         return <AdjustSettings availableHeaders={this.availableHeaders()} tableHeaders={this.state.tableHeaders} onChangeCheckbox={this.onChangeCheckbox} onChangeList={this.onChangeList} />
       case 3:
@@ -281,17 +320,16 @@ class App extends React.Component {
     }
   }
 
-
   render() {
     return(
       <Card className="main-container">
         <Card.Header as="div">
           <Row>
-            <Col lg={3}>
-              <h5>{this.renderPageTitle()}</h5>
+            <Col lg={4}>
+              <h5 className="card-title">{this.renderPageTitle()}</h5>
             </Col>
-            <Col lg={9}>
-              <CustomProgressBar activatedStep={this.state.step}/>
+            <Col lg={8}>
+              <CustomProgressBar activatedStep={this.state.step} successfullyCompleted={this.state.successfullyCompleted} />
             </Col>
           </Row>
         </Card.Header>

@@ -2,19 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Welcome to Valuenex Inc., upload your datasets within 1 minute!"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!-- <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> -->
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> -->
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -24,9 +24,82 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Valuenex Inc. | Upload Dataset</title>
   </head>
   <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA==" crossorigin="anonymous"></script>
+    <script>
+      const unparseConfig = {
+        quotes: false, //or array of booleans
+        quoteChar: '"',
+        escapeChar: '"',
+        delimiter: ",",
+        header: true,
+        newline: "\r\n",
+        skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+        columns: null //or array of strings
+      }
+      var parseExcelXLSX = function(file, component) {
+          component.setState({convertingFile: true}, function() {
+            var reader = new FileReader();
+      
+            reader.onload = function(e) {
+              var data = e.target.result;
+              var workbook = XLSX.read(data, {
+                type: 'binary'
+              });
+        
+              workbook.SheetNames.forEach(function(sheetName) {
+                // Here is your object
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = XL_row_object
+                component.setState({converted: json_object}, function() {
+                  //after loaded
+                  const convertedToString = Papa.unparse(json_object, unparseConfig)
+                  component.setState({convertingFile: false, selectedFile: convertedToString, asString: true})
+                })
+              })
+            };
+        
+            reader.onerror = function(ex) {
+              console.log(ex.target.result)
+            };
+        
+            reader.readAsBinaryString(file);
+            })
+        };
+
+        var parseExcelXLS = function(file, component) {
+          component.setState({convertingFile: true}, function() {
+            var reader = new FileReader();
+      
+            reader.onload = function(e) {
+              var data = e.target.result;
+              var cfb = XLS.CFB.read(data, {type: 'binary'});
+              var wb = XLS.parse_xlscfb(cfb);
+              // Loop Over Each Sheet
+              wb.SheetNames.forEach(function(sheetName) {
+                  // Obtain The Current Row As CSV
+                  var sCSV = XLS.utils.make_csv(wb.Sheets[sheetName]);   
+                  var json_object = XLS.utils.sheet_to_row_object_array(wb.Sheets[sheetName]);
+                  component.setState({converted: json_object}, function() {
+                    //after loaded
+                    const convertedToString = Papa.unparse(json_object, unparseConfig)
+                    component.setState({convertingFile: false, selectedFile: convertedToString, asString: true})
+                  })
+              });
+            };
+        
+            reader.onerror = function(ex) {
+              console.log(ex.target.result)
+            };
+        
+            reader.readAsBinaryString(file);
+          })
+        };
+      </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
