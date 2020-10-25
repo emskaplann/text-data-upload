@@ -6,7 +6,7 @@ export default class UploadService {
     }
 
     uploadFileToParse(requestBody) {
-        fetch(this.testURL, {
+        fetch(this.testURL, { // changing prod - test from here for server
             method: "POST",
             body: requestBody
         })
