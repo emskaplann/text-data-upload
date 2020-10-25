@@ -87,6 +87,8 @@ export default function ConfirmUpload(props) {
                         <h6><b>Your dataset was succesfully imported to our system.</b> You can upload another dataset if you'd like to.</h6>
                         <br />
                         <b><a href={props.fileUrl}>Download the imported dataset.</a></b>
+                        <br />
+                        <i><b><a href="http://calm-ocean-20734.herokuapp.com/text_data_files/" target="_blank" rel="noopener noreferrer">See index page for all imported files.</a></b></i>
                     </div>
                 )
             } else {

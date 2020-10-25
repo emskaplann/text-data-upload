@@ -26,7 +26,7 @@ class App extends React.Component {
       resultsLoading: false,
       loadResponseInfo: false,
       convertingFile: false,
-      asString: true,
+      asString: false,
     }
 
     this.uploadService = new UploadService(this)
@@ -93,8 +93,13 @@ class App extends React.Component {
     } else if(event.target.files[0].name.substr(-3) === "xls") {
       //if file is .xls
       window.parseExcelXLS(event.target.files[0], this)
-    } else {
+    } else if(event.target.files[0].name.substr(-3) === "csv" || event.target.files[0].name.substr(-3) === "tsv") {
+      //if file is .csv or .tsv
       this.setState({selectedFile: event.target.files[0]})
+    } else {
+      //if file is not supported
+      window.alert("Our system doesn't support the file. Please convert it to one of the supported file type and then try again.")
+      event.target.value = ""
     }
   }
 
@@ -322,6 +327,7 @@ class App extends React.Component {
 
   render() {
     return(
+      <>
       <Card className="main-container">
         <Card.Header as="div">
           <Row>
@@ -357,8 +363,34 @@ class App extends React.Component {
           }
         </Card.Footer>
       </Card>
+      <p className="text-muted" style={{fontSize: '11px', textAlign: 'center', width: '100%'}}>created by emirhan kaplan at 2020.</p>
+      </>
     )
   }
 }
 
 export default App;
+
+// .TXT Conversion - Not Working!
+// else if(event.target.files[0].name.substr(-3) === "txt") {
+//   var reader = new FileReader();
+//   var component = this
+//   reader.onload = function(event) {
+//     var cells = event.target.result.split('\n').map(function (el) { return el.split(/\s+/); });
+//     var headings = cells.shift();
+//     var json_object = cells.map(function (el) {
+//       var obj = {};
+//       for (var i = 0, l = el.length; i < l; i++) {
+//         obj[headings[i]] = isNaN(Number(el[i])) ? el[i] : +el[i];
+//       }
+//       return obj;
+//     });
+//     component.setState({converted: json_object}, function() {
+//       //after loaded
+//       const convertedToString = Papa.unparse(json_object, this.unparseConfig)
+//       component.setState({convertingFile: false, selectedFile: convertedToString, asString: true})
+//       console.log(convertedToString)
+//     })
+//   };
+//   reader.readAsText(event.target.files[0]);
+// } 
