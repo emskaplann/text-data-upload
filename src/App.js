@@ -363,7 +363,7 @@ class App extends React.Component {
           }
         </Card.Footer>
       </Card>
-      <p className="text-muted" style={{fontSize: '11px', textAlign: 'center', width: '100%'}}>created by emirhan kaplan at 2020.</p>
+      <p className="text-muted" style={{fontSize: '11px', textAlign: 'center', width: '100%'}}>created by emirhan kaplan in 2020.</p>
       </>
     )
   }
