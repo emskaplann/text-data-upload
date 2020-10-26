@@ -14,7 +14,7 @@ export default function FileUpload(props) {
     } else {
         return(
             <div>
-                <h6>Upload your dataset to this page and click next.</h6>
+                <h6>Upload your dataset to this page and click next when you finish.</h6>
                 <form method="post" action="#" id="#">
                     <div className="form-group files">
                         <input type="file" className="form-control fc-custom" multiple="" onChange={props.onChangeHandler} />

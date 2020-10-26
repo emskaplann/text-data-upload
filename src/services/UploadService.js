@@ -5,6 +5,28 @@ export default class UploadService {
         this.component = component
     }
 
+    cancelUploadAndShowError(error) {
+        const errorMsg = error ? ` Here is the error message: ${error}` : ""
+        this.component.setState({
+            step: 1,
+            selectedFile: null,
+            tableHeaders: [],
+            excludedHeaders: [],
+            assignedHeaders: [],
+            assigned: {
+                id: null,
+                name: null,
+                timestamp: null
+            },
+            resultsLoading: false,
+            loadResponseInfo: false,
+            convertingFile: false,
+            asString: false,
+        }, function() {
+            window.alert("Ooops! Something went wrong please try again." + errorMsg)
+        })
+    }
+
     uploadFileToParse(requestBody) {
         fetch(this.testURL, { // changing prod - test from here for server
             method: "POST",
@@ -12,11 +34,10 @@ export default class UploadService {
         })
         .then(r => r.json())
         .then(response => {
-            if(response.status === 500) {
-                // error arised in backend
-                return;
-            }
-            if(response.error) {
+            if(!response.error && !response.link) {
+                // server didn't respond as expected
+                this.cancelUploadAndShowError()
+            } else if(response.error) {
                 // handle error
                 // errorType: 0 => both, 1 => duplicate_id, 2 => non_convertible_timestamp
                 let errorType = null
@@ -52,8 +73,6 @@ export default class UploadService {
                 })
             }
         })
-        .catch(error => {
-            console.log(error)
-        })
+        .catch(error => this.cancelUploadAndShowError(error))
     }
 }

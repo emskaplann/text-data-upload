@@ -5,7 +5,7 @@ body {
 .main-container {
   width: 718px;
   height: 700px;
-  border: 1px black;
+  /* border: 0.5px black; */
   border-style: solid;
   margin: auto;
   margin-top: 50px;
@@ -215,3 +215,7 @@ body {
   font-weight: 600px;
   font-size: 20px;
 }
+
+/* .assigment-title {
+
+} */
