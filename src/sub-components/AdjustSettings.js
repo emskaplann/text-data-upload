@@ -2,8 +2,8 @@ import React from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import '../App.css';
 
-export default function AdjustSettings(props) {
-    function renderHeaders(tableHeaders) {
+export default function AdjustSettings(props) { // Adjust Settings Content
+    function renderHeaders(tableHeaders) { // this function renders availableHeaders to user
         const transformedArr = []
         for(let i = 0; i < tableHeaders.length; i++) {
             transformedArr.push(
@@ -17,7 +17,7 @@ export default function AdjustSettings(props) {
         return transformedArr
     }
 
-    function renderAvailableOptions(options) {
+    function renderAvailableOptions(options) { // this function renders available option in dropdown lists
         const transformedArr = []
         for(let i = 0; i < options.length; i++) {
             transformedArr.push(<option key={i} value={i}>{options[i]}</option>)

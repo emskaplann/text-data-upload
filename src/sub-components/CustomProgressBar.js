@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function CustomProgressBar(props) {
+export default function CustomProgressBar(props) { // this is the custom progress bar built for specifically this project
     const step = props.activatedStep
     return(
         <div className="myProgress">

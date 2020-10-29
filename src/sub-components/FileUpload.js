@@ -2,7 +2,7 @@ import React from 'react';
 import { Spinner } from 'react-bootstrap';
 import '../App.css';
 
-export default function FileUpload(props) { 
+export default function FileUpload(props) { // this is the component where we render the file upload input
     if(props.convertingFile) {
         return(
             <div>

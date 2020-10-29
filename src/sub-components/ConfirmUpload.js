@@ -3,7 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import '../App.css';
 
 export default function ConfirmUpload(props) {
-    function renderHeaders(tableHeaders) {
+    function renderHeaders(tableHeaders) { // renders choosen headers in the last step to confirm
         const transformedArr = []
         for(let i = 0; i < tableHeaders.length; i++) {
             transformedArr.push(
@@ -15,7 +15,7 @@ export default function ConfirmUpload(props) {
         return transformedArr
     }
 
-    function generateErrorMessage(errorType) {
+    function generateErrorMessage(errorType) { // this function returns appropiate error message we got from the backend
         // errorType: 0 => both, 1 => duplicate_id, 2 => non_convertible_timestamp
         switch(errorType) {
             case 0:
@@ -29,7 +29,7 @@ export default function ConfirmUpload(props) {
         }
     }
 
-    function transformArraysIntoList(arr, double) {
+    function transformArraysIntoList(arr, double) { //transfers array into columns to present a simple UI to the user
         const transformedArr = []
         for(let i = 0; i < arr.length; i++) {
             transformedArr.push(<Col key={i} lg={double ? 4 : 3}>{arr[i]}</Col>)
@@ -37,7 +37,7 @@ export default function ConfirmUpload(props) {
         return transformedArr
     }
 
-    function generateIdLists(errorLists) {
+    function generateIdLists(errorLists) { // in this function we basically render errors we got from the backend with respective ID's
         if(errorLists.duplicate_id_list && errorLists.non_convertible_timestamp_id_list) {
             return(
                 <div>
@@ -78,7 +78,7 @@ export default function ConfirmUpload(props) {
         }
     }
 
-    function renderResponseInfo(bool) {
+    function renderResponseInfo(bool) { // In this function we render information about the response we got from the backend
         if(bool) {
             if(props.fileUrl) {
                 // success

@@ -1,11 +1,11 @@
 export default class UploadService {
     constructor(component) {
-        this.testURL = "http://localhost:3000/text_data_files"
-        this.prodURL = "https://calm-ocean-20734.herokuapp.com/text_data_files"
+        this.testURL = "http://localhost:3000/text_data_files" // local server url for testing on local server
+        this.prodURL = "https://calm-ocean-20734.herokuapp.com/text_data_files" // production url which is hosted on heroku, if the server is asleep you may need to wait around 20 seconds to get a response back
         this.component = component
     }
 
-    cancelUploadAndShowError(error) {
+    cancelUploadAndShowError(error) { // this function displays alert messages if request to the backend fails and before it resets the state of the App Component
         const errorMsg = error ? ` Here is the error message: ${error}` : ""
         this.component.setState({
             step: 1,
@@ -27,7 +27,7 @@ export default class UploadService {
         })
     }
 
-    uploadFileToParse(requestBody) {
+    uploadFileToParse(requestBody) { // this is the fetch function where we actually make the request and handle the response
         fetch(this.prodURL, { // changing prod - test from here for server
             method: "POST",
             body: requestBody

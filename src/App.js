@@ -13,25 +13,25 @@ class App extends React.Component {
     super();
 
     this.state = {
-      step: 1,
-      selectedFile: null,
-      tableHeaders: [],
-      excludedHeaders: [],
-      assignedHeaders: [],
-      assigned: {
+      step: 1, // which step user is at
+      selectedFile: null, // uploaded file 
+      tableHeaders: [], // all headers system parsed from the selected file
+      excludedHeaders: [], // a boolean array to keep track of excluded headers 
+      assignedHeaders: [], // keeping track of assigned headers to the ID, Timestamp and Name
+      assigned: { // before sending request to the backend collecting assigned headers in one object
         id: null,
         name: null,
         timestamp: null
       },
-      resultsLoading: false,
-      loadResponseInfo: false,
-      convertingFile: false,
-      asString: false,
+      resultsLoading: false, // when we make request this for displaying loading icon on the button
+      loadResponseInfo: false, // this prop is passed to the child component(ConfirmUpload) to render the message we got from the backend
+      convertingFile: false, // when we convert excel files on frontend this prop is used show loading icon
+      asString: false, // when we send excel files to the backend we send them as a string so this is used indicate whether we are sending string or an actual file
     }
 
-    this.uploadService = new UploadService(this)
+    this.uploadService = new UploadService(this) // setting up the class for communicating with our backend - concept is called "Dependency Injection"
     
-    this.config = {
+    this.config = { // this object is passed as an argument to the JS CSV parser method
       delimiter: "",	// auto-detect
       newline: "",	// auto-detect
       quoteChar: '"',
@@ -59,7 +59,7 @@ class App extends React.Component {
       delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
     }
 
-    this.unparseConfig = {
+    this.unparseConfig = { // this object is passed as an argument to the JS CSV unParser method
       quotes: false, //or array of booleans
       quoteChar: '"',
       escapeChar: '"',
@@ -71,14 +71,14 @@ class App extends React.Component {
     }
   }
   
-  parseComplete = (results, parser) => {
-    if(results.errors.length > 0) {
+  parseComplete = (results, parser) => { // call-back function, called when parsing operation is complete
+    if(results.errors.length > 0) { // didn't add error handling for this one
       // error handling
 
     } else {
       // load start
-      this.setState({tableHeaders: results.data[0], excludedHeaders: results.data[0].map(el => true)}, function(){
-        this.setState({step: 2}, function() {
+      this.setState({tableHeaders: results.data[0], excludedHeaders: results.data[0].map(el => true)}, function(){ // we are assigning the first row of the parsed file as the headers and then we create the boolean array for excludedHeaders initially all values are true
+        this.setState({step: 2}, function() { // When parsing is complete and we have the necessary files we move onto second step
           // load end
 
         })
@@ -86,7 +86,7 @@ class App extends React.Component {
     }
   }
 
-  onChangeHandler = event => {
+  onChangeHandler = event => { // this function handles changes made on the File Input
     if(event.target.files[0].name.substr(-4) === "xlsx") {
       //if file is .xlsx
       window.parseExcelXLSX(event.target.files[0], this)
@@ -103,7 +103,7 @@ class App extends React.Component {
     }
   }
 
-  onChangeCheckbox = event => {
+  onChangeCheckbox = event => { // this function handles when user includes or excludes headers in the second step
     const newArr = this.state.excludedHeaders.slice()
     newArr[event.target.id] = !newArr[event.target.id]
     for(let val in this.state.assigned) {
@@ -137,7 +137,7 @@ class App extends React.Component {
     this.setState({excludedHeaders: newArr})
   }
 
-  syncAssHeadersState = () => {
+  syncAssHeadersState = () => { // this function is called when we have changes on the headers to make sure our double-source is synced with each other
     let currentAssHeaders = []
     for(let val in this.state.assigned) {
       let i = this.availableHeaders().indexOf(this.state.assigned[val])
@@ -147,7 +147,7 @@ class App extends React.Component {
     this.setState({assignedHeaders: [...new Set(currentAssHeaders)]})
   }
 
-  onChangeList = event => {
+  onChangeList = event => { // this function handles the dropdown list for assigning columns 
     let val = parseInt(event.target.value)
     if(val > -1) {
       // debugger
@@ -168,9 +168,9 @@ class App extends React.Component {
     }
   }
 
-  nextButtonHandler = event => {
+  nextButtonHandler = event => { // this function handles clicks for next button which is located right-bottom on the ui
     switch(this.state.step) {
-      case 1:
+      case 1: // in first step we check if we have an actual file or string and we act depending on that
         if(!this.state.selectedFile) {
           window.alert("Please select a file to move forward.")
         } else {
@@ -189,15 +189,15 @@ class App extends React.Component {
           this.setState({step: 2})
         }
         break;
-      case 2:
+      case 2: // we don't have to do anything on second step
         this.setState({step: 3})
         break;
-      case 3:
+      case 3: // this where we make the request to the backend
         if(!this.state.errorType && !this.state.successfullyCompleted) {
           // send the request
           // start loading icon
           this.setState({resultsLoading: !this.state.resultsLoading})
-          const form = new FormData()
+          const form = new FormData() // creating the form object for request body
           form.append("file", this.state.selectedFile)
           form.append("table_headers", this.availableHeaders())
           form.append("id", this.state.assigned.id)
@@ -236,6 +236,7 @@ class App extends React.Component {
     }
   }
 
+  // Changing page title according to the current step
   renderPageTitle = () => {
     switch(this.state.step) {
       case 1:
@@ -249,6 +250,7 @@ class App extends React.Component {
     }
   }
 
+  // Filtering exlcuded headers from all headers
   availableHeaders = () => {
     return this.state.tableHeaders.filter((el, idx) => {
       if(this.state.excludedHeaders[idx]) {
@@ -257,7 +259,7 @@ class App extends React.Component {
       return false
     })
   }
-
+  // If user clicks cancel this function resets every state property to its initial value
   cancelUpload = event => {
     // cancel upload
     this.setState({
@@ -283,7 +285,7 @@ class App extends React.Component {
     })
   }
 
-  renderContent = () => {
+  renderContent = () => { // this function renders the main content on UI based on the step value we have in the state
     switch(this.state.step) {
       case 1:
         return <FileUpload onChangeHandler={this.onChangeHandler} fileLoading={this.state.convertingFile} />
@@ -296,7 +298,7 @@ class App extends React.Component {
     }
   }
 
-  stepToProgress = () => {
+  stepToProgress = () => { // this function returns the appropiate percentage for the progress bar based on step value 
     switch(this.state.step) {
       case 1:
         return 0
@@ -309,7 +311,7 @@ class App extends React.Component {
     }
   }
 
-  nextButtonEnabled = () => {
+  nextButtonEnabled = () => { // this function returns boolean to disable or enable or next button depending on provided inputs from the user
     switch(this.state.step) {
       case 1:
         if(this.state.selectedFile) return true
@@ -340,10 +342,6 @@ class App extends React.Component {
           </Row>
         </Card.Header>
         <Card.Body>
-          {/* <Card.Title>Special title treatment</Card.Title>
-          <Card.Text>
-            With supporting text below as a natural lead-in to additional content.
-          </Card.Text> */}
           {this.renderContent()}
         </Card.Body>
         <Card.Footer>
@@ -371,7 +369,7 @@ class App extends React.Component {
 
 export default App;
 
-// .TXT Conversion - Not Working!
+// .TXT Conversion - Not Working! Because there is a lot different formats we can get from the user
 // else if(event.target.files[0].name.substr(-3) === "txt") {
 //   var reader = new FileReader();
 //   var component = this
