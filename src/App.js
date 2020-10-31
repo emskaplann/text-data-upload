@@ -13,7 +13,7 @@ class App extends React.Component {
     super();
 
     this.state = {
-      step: 3, // which step user is at
+      step: 1, // which step user is at
       selectedFile: null, // uploaded file 
       tableHeaders: [], // all headers system parsed from the selected file
       excludedHeaders: [], // a boolean array to keep track of excluded headers 
