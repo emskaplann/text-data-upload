@@ -13,7 +13,7 @@ class App extends React.Component {
     super();
 
     this.state = {
-      step: 1, // which step user is at
+      step: 3, // which step user is at
       selectedFile: null, // uploaded file 
       tableHeaders: [], // all headers system parsed from the selected file
       excludedHeaders: [], // a boolean array to keep track of excluded headers 
@@ -320,8 +320,9 @@ class App extends React.Component {
         if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
         break;
       case 3:
-        if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
-        break;
+        // if(this.state.assigned.id && this.state.assigned.name && this.state.assigned.timestamp && this.state.excludedHeaders.includes(true)) return true
+        return false
+        // break;
       default:
         return false
     }
@@ -347,7 +348,7 @@ class App extends React.Component {
         <Card.Footer>
           {this.state.step > 1 && !this.state.successfullyCompleted ? <Button className="cancel-button" variant="secondary" onClick={this.cancelUpload}>Cancel</Button> : null}
           {
-            !this.state.resultsLoading ? <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? this.state.errorType || this.state.successfullyCompleted ? "Upload Another" : "Upload" : "Next"}</Button>
+            !this.state.resultsLoading ? <Button className="move-forward-button" variant="primary" onClick={this.nextButtonHandler} disabled={!this.nextButtonEnabled()}>{this.state.step === 3 ? this.state.errorType || this.state.successfullyCompleted ? "Upload Another" : "Server is down, because of exceeding free hours for this month." : "Next"}</Button>
             : <Button className="move-forward-button" variant="primary" disabled>
                 <Spinner
                   as="span"
